@@ -4,8 +4,12 @@ import useAuth from "./../../hooks/useAuth";
 import { useState } from "react";
 import { TbFidgetSpinner } from "react-icons/tb";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useNavigate } from "react-router-dom";
+
+
 
 const AddPlantForm = () => {
+  const navigate = useNavigate()
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState("upload image");
@@ -13,6 +17,8 @@ const AddPlantForm = () => {
   const [imageSize, setImageSize] = useState(null);
   const { displayName, photoURL, email } = user;
   const axiosSecure = useAxiosSecure();
+
+
 
   const handleAdd = async (e) => {
     e.preventDefault();
@@ -43,6 +49,7 @@ const AddPlantForm = () => {
     try {
       await axiosSecure.post(`${import.meta.env.VITE_API_URL}/plants`, addInfo);
       alert("successfully added");
+      navigate('/dashboard/my-inventory')
     } catch (error) {
       console.log(error);
     } finally {

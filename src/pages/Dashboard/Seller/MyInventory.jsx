@@ -1,8 +1,26 @@
 import { Helmet } from 'react-helmet-async'
 
 import PlantDataRow from '../../../components/Dashboard/TableRows/PlantDataRow'
+import useAxiosSecure from '../../../hooks/useAxiosSecure'
+import { useQuery } from '@tanstack/react-query'
+import { useContext } from 'react'
+import { AuthContext } from '../../../providers/AuthProvider'
 
 const MyInventory = () => {
+  const {user, loading} = useContext(AuthContext)
+  const axiosSecure = useAxiosSecure()
+
+
+  const { data:myPlants=[], isPending } = useQuery({
+    queryKey: ['myPlants',user?.email],
+    enabled:!loading,
+    queryFn: async() =>{
+     const res = await axiosSecure.get(`/plants/${user.email}`)
+      return res.data
+    }
+  }) 
+
+
   return (
     <>
       <Helmet>
@@ -61,7 +79,10 @@ const MyInventory = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <PlantDataRow />
+                  {
+                    myPlants.map(item => <PlantDataRow key={item._id} item={item}/>)
+                  }
+                  
                 </tbody>
               </table>
             </div>
